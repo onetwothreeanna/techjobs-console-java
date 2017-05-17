@@ -10,6 +10,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -74,15 +75,61 @@ public class JobData {
 
         for (HashMap<String, String> row : allJobs) {
 
-            String aValue = row.get(column);
+            String aValue = row.get(column).toLowerCase();
 
-            if (aValue.contains(value)) {
+            if (aValue.contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
 
         return jobs;
     }
+
+    //how to lowercase all items in an arraylist?  lowercase arraylist, lowercase search term, compare
+
+    /**Searches for a String within each of the columns**/
+    public static ArrayList<HashMap<String, String>> findByValue (String searchTerm){
+
+        //load data, if not already loaded
+        loadData();
+
+
+        //create a new arrayList to hold all jobs containing searchterm
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+
+        //alljobs is an arraylist of hashmaps.  need to get into the arraylist and search the hashmaps first
+
+        boolean match = false;
+
+        //for each Hashmap (called job) within the ArrayList of allJobs
+        for (HashMap<String, String> job : allJobs) {
+
+            //Why is this only searching through core competencies? Because it's the last search term. Even if there's a match, once it searches through the rest it will switch to false
+
+            for (String item: job.values()) { //for each row in hashmap job
+                    if (item.toLowerCase().contains(searchTerm.toLowerCase())) {
+
+                        //To prevent repeating: if the job is already in jobs arraylist, do nothing, if not, add it
+
+                        if (jobs.contains(job)){
+                            match = false;
+                        }
+                        else{
+                            match = true;
+                            jobs.add(job);
+                        }
+
+                    }
+                    else{
+                        match = false;
+                    }
+                }
+
+        }
+        return jobs;
+    }
+
 
     /**
      * Read in data from a CSV file and store it in a list
